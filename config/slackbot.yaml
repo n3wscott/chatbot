@@ -1,0 +1,16 @@
+apiVersion: gateway.n3wscott.com/v1alpha1
+kind: Slackbot
+metadata:
+  annotations:
+    trigger.eventing.knative.dev/filter: |
+      [{"type":"slackbot.response"}]
+  labels:
+    eventing.knative.dev/autotrigger: "true"
+  name: slackbot
+spec:
+  # TODO: instance.
+  sink:
+    ref:
+      apiVersion: eventing.knative.dev/v1alpha1
+      kind: Broker
+      name: default
