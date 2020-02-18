@@ -38,6 +38,10 @@ func gotEvent(ctx context.Context, event cloudevents.Event, resp *cloudevents.Ev
 
 	switch s := se.(type) {
 	case *slack.MessageEvent:
+		if s.User == "USLACKBOT" {
+			return
+		}
+
 		fmt.Printf("GOT A SLACK MESSAGE!\n")
 
 		r := cloudevents.NewEvent("1.0")

@@ -1,0 +1,14 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  annotations:
+    trigger.eventing.knative.dev/filter: |
+      [{"type":"pull_request"}]
+  labels:
+    eventing.knative.dev/autotrigger: "true"
+  name: chatbot-pullnote
+spec:
+  template:
+    spec:
+      containers:
+      - image: github.com/n3wscott/chatbot/cmd/pullnote
