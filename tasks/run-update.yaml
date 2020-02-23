@@ -1,0 +1,25 @@
+apiVersion: tekton.dev/v1alpha1
+kind: TaskRun
+metadata:
+  generateName: update-deps-knative-eventing-
+  namespace: bots
+spec:
+  taskRef:
+    name: dep-update
+  inputs:
+    resources:
+    - name: source
+      resourceSpec:
+        type: git
+        params:
+        - name: url
+          value: https://github.com/botless/commands.git
+    params:
+    - name: ORGANIZATION
+      value: botless
+    - name: REPOSITORY
+      value: commands
+    - name: DEPENDENCIES
+      value: github.com/cloudevents/sdk-go
+    - name: ASSIGNEE
+      value: n3wscott
