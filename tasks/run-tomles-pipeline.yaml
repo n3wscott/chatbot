@@ -1,0 +1,22 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  generateName: run-toml-pipe-
+  namespace: bots
+spec:
+  pipelineRef:
+    name: toml-pipe
+  resources:
+    - name: source
+      resourceSpec:
+        type: git
+        params:
+          - name: url
+            value: https://github.com/botless/commands.git
+  params:
+    - name: GOPKG
+      value: github.com/botless/commands
+    - name: DEPENDENCY
+      value: github.com/cloudevents/sdk-go
+    - name: VERSION
+      value: v1.0.0

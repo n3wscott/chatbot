@@ -1,0 +1,58 @@
+
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: toml-pipe
+  namespace: bots
+spec:
+  resources:
+    - name: source-git
+      type: git
+  params:
+    - name: GOPKG
+    - name: DEPENDENCY
+    - name: REVISION
+      default: ""
+    - name: BRANCH
+      default: ""
+    - name: VERSION
+      default: ""
+
+  tasks:
+    - name: cat-pre
+      taskRef:
+        name: cat-toml
+      resources:
+        inputs:
+          - name: source
+            resource: source-git
+
+    - name: update-cloudevents
+      taskRef:
+        name: tomles
+      resources:
+        inputs:
+          - name: source
+            resource: source-git
+        outputs:
+          - name: source
+            resource: source-git
+      params:
+        - name: GOPKG
+          value: "$(params.GOPKG)"
+        - name: DEPENDENCY
+          value: "$(params.DEPENDENCY)"
+        - name: REVISION
+          value: "$(params.REVISION)"
+        - name: BRANCH
+          value: "$(params.BRANCH)"
+        - name: VERSION
+          value: "$(params.VERSION)"
+
+    - name: cat-post
+      taskRef:
+        name: cat-toml
+      resources:
+        inputs:
+          - name: source
+            resource: source-git

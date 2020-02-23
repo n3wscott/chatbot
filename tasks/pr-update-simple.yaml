@@ -1,0 +1,80 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: dep-update-simple
+  namespace: bots
+spec:
+  inputs:
+    params:
+    - name: GOPKG
+    - name: ORGANIZATION
+    - name: REPOSITORY
+    - name: DEPENDENCIES
+    - name: BRANCH
+      default: master
+    - name: ASSIGNEE
+      default: mattmoor
+    resources:
+    - name: source
+      type: git
+      targetPath: go/src/$(inputs.params.GOPKG)
+
+  steps:
+
+  - name: tomles
+    image: ko://github.com/n3wscott/chatbot/cmd/tomles
+    args:
+    - "update"
+    - "github.com/cloudevents/sdk-go"
+    - "--revision=3673e23532dccb38196f600eec7e8b7090ecfb12"
+    - "--filename=/workspace/go/src/$(inputs.params.GOPKG)/Gopkg.toml"
+    - "--verbose"
+
+  - name: dep
+    image: gcr.io/snichols-vmw/dep:latest
+    command: ["/bin/bash", "-c"]
+    resources:
+      requests:
+        cpu: 3000m
+        memory: 2Gi
+    workingDir: /workspace/go/src/$(inputs.params.GOPKG)
+    args:
+    - |
+      set -e
+      set -x
+      go get -u github.com/google/licenseclassifier
+      go get -u github.com/knative/test-infra/tools/dep-collector
+      export PATH=${PATH}:${GOPATH}/bin
+      dep ensure -update $(inputs.params.DEPENDENCIES)
+      # Sometimes we "fix up" ./vendor, so run this for good measure.
+      ./hack/update-deps.sh
+      # We may pull in code-generator updates.
+      #./hack/update-codegen.sh
+    env:
+    - name: GOPATH
+      value: /workspace/go
+
+  - name: prbuilder
+    image: ko://github.com/n3wscott/chatbot/cmd/prbuilder
+    args:
+    - "--workspace=/workspace/source"
+    - "--repo=$(inputs.params.ORGANIZATION)/$(inputs.params.REPOSITORY)"
+    - "--target=$(inputs.params.BRANCH)"
+    - "--commit-branch=random"
+    - "--title=Auto-update dependencies"
+    - "--body"
+    - |
+        Produced via:
+          `dep ensure -update $(inputs.params.DEPENDENCIES)`
+        /assign $(inputs.params.ASSIGNEE)
+        /cc $(inputs.params.ASSIGNEE)
+
+    # This mimics the runtime contract of the GithubBinding
+    volumeMounts:
+    - name: github-binding
+      mountPath: /var/bindings/github
+
+  volumes:
+  - name: github-binding
+    secret:
+      secretName: github-bots

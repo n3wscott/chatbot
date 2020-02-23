@@ -1,0 +1,37 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: tomles
+  namespace: bots
+spec:
+  inputs:
+    params:
+      - name: GOPKG
+      - name: DEPENDENCY
+      - name: REVISION
+        default: ""
+      - name: BRANCH
+        default: ""
+      - name: VERSION
+        default: ""
+    resources:
+      - name: source
+        type: git
+        targetPath: go/src/$(inputs.params.GOPKG)
+
+  steps:
+    - name: tomles
+      image: ko://github.com/n3wscott/chatbot/cmd/tomles
+      args:
+        - "update"
+        - "$(inputs.params.DEPENDENCY)"
+        - "--revision=$(inputs.params.REVISION)"
+        - "--branch=$(inputs.params.BRANCH)"
+        - "--version=$(inputs.params.VERSION)"
+        - "--filename=/workspace/go/src/$(inputs.params.GOPKG)/Gopkg.toml"
+        - "--verbose"
+
+  outputs:
+    - name: source
+      type: git
+      targetPath: go/src/$(inputs.params.GOPKG)
