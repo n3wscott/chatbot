@@ -6,7 +6,6 @@ metadata:
 spec:
   inputs:
     params:
-      - name: GOPKG
       - name: DEPENDENCY
       - name: REVISION
         default: ""
@@ -17,7 +16,11 @@ spec:
     resources:
       - name: source
         type: git
-        targetPath: go/src/$(inputs.params.GOPKG)
+
+  outputs:
+    resources:
+      - name: source
+        type: git
 
   steps:
     - name: tomles
@@ -28,10 +31,9 @@ spec:
         - "--revision=$(inputs.params.REVISION)"
         - "--branch=$(inputs.params.BRANCH)"
         - "--version=$(inputs.params.VERSION)"
-        - "--filename=/workspace/go/src/$(inputs.params.GOPKG)/Gopkg.toml"
+        - "--filename=/workspace/source/Gopkg.toml"
         - "--verbose"
 
-  outputs:
-    - name: source
-      type: git
-      targetPath: go/src/$(inputs.params.GOPKG)
+    - name: cp-output
+      image: ubuntu
+      script: 'rm -rf $(outputs.resources.source.path) && cp -r $(inputs.resources.source.path) $(outputs.resources.source.path)'

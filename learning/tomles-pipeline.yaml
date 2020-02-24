@@ -11,6 +11,8 @@ spec:
   params:
     - name: GOPKG
     - name: DEPENDENCY
+    - name: ORGANIZATION
+    - name: REPOSITORY
     - name: REVISION
       default: ""
     - name: BRANCH
@@ -27,7 +29,7 @@ spec:
           - name: source
             resource: source-git
 
-    - name: update-cloudevents
+    - name: tomles
       taskRef:
         name: tomles
       resources:
@@ -38,8 +40,6 @@ spec:
           - name: source
             resource: source-git
       params:
-        - name: GOPKG
-          value: "$(params.GOPKG)"
         - name: DEPENDENCY
           value: "$(params.DEPENDENCY)"
         - name: REVISION
@@ -49,6 +49,23 @@ spec:
         - name: VERSION
           value: "$(params.VERSION)"
 
+    - name: update-deps
+      taskRef:
+        name: update-deps
+      resources:
+        inputs:
+          - name: source
+            resource: source-git
+            from: [tomles]
+        outputs:
+          - name: source
+            resource: source-git
+      params:
+        - name: GOPKG
+          value: "$(params.GOPKG)"
+        - name: DEPENDENCIES
+          value: "$(params.DEPENDENCY)"
+
     - name: cat-post
       taskRef:
         name: cat-toml
@@ -56,3 +73,23 @@ spec:
         inputs:
           - name: source
             resource: source-git
+            from: [update-deps]
+
+# TODO: conditional on if changes.
+    - name: pullrequest
+      taskRef:
+        name: pullrequest
+      resources:
+        inputs:
+          - name: source
+            resource: source-git
+            from: [update-deps]
+      params:
+        - name: REPOSITORY
+          value: "$(params.REPOSITORY)"
+        - name: ORGANIZATION
+          value: "$(params.ORGANIZATION)"
+        - name: BRANCH
+          value: "$(params.BRANCH)"
+        - name: DEPENDENCIES
+          value: "$(params.DEPENDENCY)"

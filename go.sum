@@ -293,12 +293,16 @@ github.com/n3wscott/prbuilder v0.0.0-20200223051519-b7b63c8f7733 h1:XbgixpSuIR8r
 github.com/n3wscott/prbuilder v0.0.0-20200223051519-b7b63c8f7733/go.mod h1:orrtv7xDqaKn0xgkan8J+I8bshHf6UaWnIrL7/pu1fE=
 github.com/n3wscott/prbuilder v0.0.1 h1:hf00O3CF2ydLNY/i+dwuKqLVa8ZUiO9/AfGJeub4gWc=
 github.com/n3wscott/prbuilder v0.0.1/go.mod h1:orrtv7xDqaKn0xgkan8J+I8bshHf6UaWnIrL7/pu1fE=
+github.com/n3wscott/prbuilder v0.0.2-0.20200223234359-895328ae2a69 h1:3t9hje9jjT+AM6TiP80xQsGt5OJCMTp6SQ1iFqTXKkc=
+github.com/n3wscott/prbuilder v0.0.2-0.20200223234359-895328ae2a69/go.mod h1:orrtv7xDqaKn0xgkan8J+I8bshHf6UaWnIrL7/pu1fE=
 github.com/n3wscott/tomles v0.0.0-20191204001427-c933c9700070 h1:lJI5t1JGC06WIdMiEUPwLng5A9smOHqC6r4o2AMd/ag=
 github.com/n3wscott/tomles v0.0.0-20191204001427-c933c9700070/go.mod h1:l4sSLFYgnSpMv6anOQxbIja4tCi4tP+WLKrM2E8jSow=
 github.com/n3wscott/tomles v0.0.1 h1:z3EkFDDeQ1WGsgBGxdbgD5nOazeOZKUUj1hZy6NJORM=
 github.com/n3wscott/tomles v0.0.1/go.mod h1:l4sSLFYgnSpMv6anOQxbIja4tCi4tP+WLKrM2E8jSow=
 github.com/n3wscott/tomles v0.0.3 h1:pF8YVEzFJLXu/YxeWE5FcELGqoCyCBuFJOVZYb7JQPg=
 github.com/n3wscott/tomles v0.0.3/go.mod h1:l4sSLFYgnSpMv6anOQxbIja4tCi4tP+WLKrM2E8jSow=
+github.com/n3wscott/tomles v0.0.4-0.20200223210135-d9f8f01c742d h1:jD/v2gUmyhosCcZMCnMIvBHKnp4aDtcqDMp7JHrBAzA=
+github.com/n3wscott/tomles v0.0.4-0.20200223210135-d9f8f01c742d/go.mod h1:l4sSLFYgnSpMv6anOQxbIja4tCi4tP+WLKrM2E8jSow=
 github.com/nats-io/jwt v0.3.0/go.mod h1:fRYCDE99xlTsqUzISS1Bi75UBJ6ljOJQOAAu5VglpSg=
 github.com/nats-io/jwt v0.3.2/go.mod h1:/euKqTS1ZD+zzjYrY7pseZrTtWQSjujC7xjPc8wL6eU=
 github.com/nats-io/nats-server/v2 v2.1.2/go.mod h1:Afk+wRZqkMQs/p45uXdrVLuab3gwv3Z8C4HTBu8GD/k=

@@ -1,0 +1,91 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: update-toml-deps
+  namespace: bots
+spec:
+  resources:
+    - name: source-git
+      type: git
+  params:
+    - name: GOPKG
+    - name: DEPENDENCIES
+      default: "$(params.DEP_DEPENDENCY)"
+    - name: ORGANIZATION
+    - name: REPOSITORY
+    # tomles
+    - name: DEP_DEPENDENCY
+    - name: DEP_REVISION
+      default: ""
+    - name: DEP_BRANCH
+      default: ""
+    - name: DEP_VERSION
+      default: ""
+    # PR builder
+    - name: PR_TITLE
+    - name: PR_BODY
+    - name: ASSIGNEE
+      default: n3wscott
+    - name: TARGET_BRANCH
+      default: "master"
+    - name: COMMIT_BRANCH
+      default: "random"
+
+  tasks:
+    - name: tomles
+      taskRef:
+        name: tomles
+      resources:
+        inputs:
+          - name: source
+            resource: source-git
+        outputs:
+          - name: source
+            resource: source-git
+      params:
+        - name: DEPENDENCY
+          value: "$(params.DEP_DEPENDENCY)"
+        - name: REVISION
+          value: "$(params.DEP_REVISION)"
+        - name: BRANCH
+          value: "$(params.DEP_BRANCH)"
+        - name: VERSION
+          value: "$(params.DEP_VERSION)"
+
+    - name: update-deps
+      taskRef:
+        name: update-deps
+      resources:
+        inputs:
+          - name: source
+            resource: source-git
+            from: [tomles]
+        outputs:
+          - name: source
+            resource: source-git
+      params:
+        - name: GOPKG
+          value: "$(params.GOPKG)"
+        - name: DEPENDENCIES
+          value: "$(params.DEPENDENCIES)"
+
+# TODO: conditional on if changes.
+    - name: pullrequest
+      taskRef:
+        name: pullrequest
+      resources:
+        inputs:
+          - name: source
+            resource: source-git
+            from: [update-deps]
+      params:
+        - name: REPO
+          value: "$(params.ORGANIZATION)/$(params.REPOSITORY)"
+        - name: TARGET
+          value: "$(params.TARGET_BRANCH)"
+        - name: COMMIT_BRANCH
+          value: "$(params.COMMIT_BRANCH)"
+        - name: TITLE
+          value: "$(params.PR_TITLE)"
+        - name: BODY
+          value: "$(params.PR_BODY)"

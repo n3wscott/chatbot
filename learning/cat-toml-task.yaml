@@ -14,4 +14,9 @@ spec:
       image: ubuntu
       command: ["/bin/bash", "-c"]
       args:
-        - "cat /workspace/source/Gopkg.toml"
+        - |
+          set -e
+          set -x
+          ls /workspace
+          ls /workspace/source
+          cat /workspace/source/Gopkg.toml

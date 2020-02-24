@@ -1,0 +1,79 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: pipeline-git
+spec:
+  type: git
+  params:
+    - name: revision
+      value: master
+    - name: url
+      value: https://github.com/tektoncd/pipeline
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: create-readme-file
+spec:
+  outputs:
+    resources:
+      - name: workspace
+        type: git
+  steps:
+    - name: write-new-stuff
+      image: ubuntu
+      script: 'touch $(outputs.resources.workspace.path)/README.md'
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: echo-hello
+spec:
+  inputs:
+    resources:
+      - name: workspace
+        type: git
+  steps:
+    - name: echo
+      image: ubuntu
+      script: 'cat $(inputs.resources.workspace.path)/README.md'
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: conditional-pipeline
+spec:
+  resources:
+    - name: source-repo
+      type: git
+  params:
+    - name: "path"
+      default: "README.md"
+  tasks:
+    - name: first-create-file
+      taskRef:
+        name: create-readme-file
+      resources:
+        outputs:
+          - name: workspace
+            resource: source-repo
+    - name: echo
+      taskRef:
+        name: echo-hello
+      resources:
+        inputs:
+          - name: workspace
+            resource: source-repo
+            from: [first-create-file]
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  name: condtional-pr
+spec:
+  pipelineRef:
+    name: conditional-pipeline
+  resources:
+    - name: source-repo
+      resourceRef:
+        name: pipeline-git

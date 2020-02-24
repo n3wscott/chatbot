@@ -1,0 +1,33 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  generateName: run-update-toml-deps-
+  namespace: bots
+spec:
+  pipelineRef:
+    name: update-toml-deps
+  resources:
+    - name: source-git
+      resourceSpec:
+        type: git
+        params:
+          - name: url
+            value: https://github.com/knative/eventing.git
+  params:
+    - name: GOPKG
+      value: knative.dev/eventing
+    - name: ORGANIZATION
+      value: knative
+    - name: REPOSITORY
+      value: eventing
+    - name: DEP_DEPENDENCY
+      value: knative.dev/pkg
+    - name: DEP_BRANCH
+      value: release-0.12
+    - name: PR_TITLE
+      value: "[WIP] TESTING - DO NOT SUBMIT"
+    - name: PR_BODY
+      value: |
+        Produced via:
+            `TODO TODO`
+        /assign $(params.ASSIGNEE)

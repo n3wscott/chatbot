@@ -15,8 +15,6 @@ spec:
         - name: url
           value: https://github.com/botless/commands.git
     params:
-    - name: GOPKG
-      value: github.com/botless/commands
     - name: DEPENDENCY
       value: github.com/cloudevents/sdk-go
     - name: VERSION

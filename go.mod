@@ -6,8 +6,8 @@ require (
 	github.com/cloudevents/sdk-go v1.0.0
 	github.com/google/go-github v17.0.0+incompatible
 	github.com/google/ko v0.3.0 // indirect
-	github.com/n3wscott/prbuilder v0.0.1
-	github.com/n3wscott/tomles v0.0.3
+	github.com/n3wscott/prbuilder v0.0.2-0.20200223234359-895328ae2a69
+	github.com/n3wscott/tomles v0.0.4-0.20200223210135-d9f8f01c742d
 	github.com/nlopes/slack v0.6.0
 )
 

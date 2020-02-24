@@ -1,0 +1,48 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: update-deps
+  namespace: bots
+spec:
+  inputs:
+    params:
+    - name: GOPKG
+    - name: DEPENDENCIES
+    resources:
+    - name: source
+      type: git
+      targetPath: "go/src/$(inputs.params.GOPKG)"
+
+  outputs:
+    resources:
+      - name: source
+        type: git
+
+  steps:
+  - name: dep
+    image: gcr.io/snichols-vmw/dep:latest
+    command: ["/bin/bash", "-c"]
+    resources:
+      requests:
+        cpu: 3000m
+        memory: 2Gi
+    workingDir: "/workspace/go/src/$(inputs.params.GOPKG)"
+    args:
+    - |
+      set -e
+      set -x
+      go get -u github.com/google/licenseclassifier
+      go get -u github.com/knative/test-infra/tools/dep-collector
+      export PATH=${PATH}:${GOPATH}/bin
+      dep ensure -update $(inputs.params.DEPENDENCIES)
+      # Sometimes we "fix up" ./vendor, so run this for good measure.
+      ./hack/update-deps.sh
+      # We may pull in code-generator updates.
+      #./hack/update-codegen.sh
+    env:
+    - name: GOPATH
+      value: /workspace/go
+
+  - name: cp-output
+    image: ubuntu
+    script: 'rm -rf $(outputs.resources.source.path) && cp -r /workspace/go/src/$(inputs.params.GOPKG) $(outputs.resources.source.path)'

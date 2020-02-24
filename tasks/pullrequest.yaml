@@ -1,0 +1,44 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: pullrequest
+  namespace: bots
+spec:
+  inputs:
+    params:
+    - name: REPO
+    - name: TARGET
+      default: master
+    - name: COMMIT_BRANCH
+      default: random
+    - name: TITLE
+    - name: BODY
+    - name: GITHUB_BINDING_SECRET_NAME
+      default: github-bots
+
+    resources:
+    - name: source
+      type: git
+
+  steps:
+  - name: prbuilder
+    workingDir: /workspace/source
+    image: ko://github.com/n3wscott/chatbot/cmd/prbuilder
+    args:
+    - "--workspace=./"
+    - "--repo=$(inputs.params.REPO)"
+    - "--target=$(inputs.params.TARGET)"
+    - "--commit-branch=$(inputs.params.COMMIT_BRANCH)"
+    - "--title=$(inputs.params.TITLE)"
+    - "--body"
+    - "$(inputs.params.BODY)"
+
+    # This mimics the runtime contract of the GithubBinding
+    volumeMounts:
+    - name: github-binding
+      mountPath: /var/bindings/github
+
+  volumes:
+  - name: github-binding
+    secret:
+      secretName: $(inputs.params.GITHUB_BINDING_SECRET_NAME)

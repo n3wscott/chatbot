@@ -1,0 +1,22 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: cat-toml
+  namespace: bots
+spec:
+  inputs:
+    resources:
+      - name: source
+        type: git
+
+  steps:
+    - name: cat
+      image: ubuntu
+      command: ["/bin/bash", "-c"]
+      args:
+        - |
+          set -e
+          set -x
+          ls /workspace
+          ls /workspace/source
+          cat /workspace/source/Gopkg.toml

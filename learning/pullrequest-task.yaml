@@ -1,0 +1,45 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: pullrequest
+  namespace: bots
+spec:
+  inputs:
+    params:
+    - name: ORGANIZATION
+    - name: REPOSITORY
+    - name: DEPENDENCIES
+    - name: BRANCH
+      default: master
+    - name: ASSIGNEE
+      default: mattmoor
+    resources:
+    - name: source
+      type: git
+
+  steps:
+  - name: prbuilder
+    workingDir: /workspace/source
+    image: ko://github.com/n3wscott/chatbot/cmd/prbuilder
+    args:
+    - "--workspace=/workspace/source"
+    - "--repo=$(inputs.params.ORGANIZATION)/$(inputs.params.REPOSITORY)"
+    - "--target=$(inputs.params.BRANCH)"
+    - "--commit-branch=random"
+    - "--title=Auto-update dependencies"
+    - "--body"
+    - |
+        Produced via:
+          `dep ensure -update $(inputs.params.DEPENDENCIES)`
+        /assign $(inputs.params.ASSIGNEE)
+        /cc $(inputs.params.ASSIGNEE)
+
+    # This mimics the runtime contract of the GithubBinding
+    volumeMounts:
+    - name: github-binding
+      mountPath: /var/bindings/github
+
+  volumes:
+  - name: github-binding
+    secret:
+      secretName: github-bots
