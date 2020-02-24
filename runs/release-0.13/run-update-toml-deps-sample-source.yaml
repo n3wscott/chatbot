@@ -1,0 +1,44 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  generateName: run-update-toml-deps-sample-source-
+  namespace: bots
+spec:
+  pipelineRef:
+    name: update-toml-deps
+  resources:
+    - name: source-git
+      resourceSpec:
+        type: git
+        params:
+          - name: url
+            value: https://github.com/knative/sample-source.git
+  params:
+    - name: GOPKG
+      value: knative.dev/sample-source
+    - name: ORGANIZATION
+      value: knative
+    - name: REPOSITORY
+      value: sample-source
+    - name: DEPENDENCIES
+      value: knative.dev/pkg
+    - name: DEP_DEPENDENCY
+      value: knative.dev/pkg
+    - name: DEP_BRANCH
+      value: "release-0.13"
+    - name: PR_TITLE
+      value: "Preparing for v0.13 release, point pkg to release-0.13."
+    - name: PR_BODY
+      value: |
+        ## Proposed Changes
+
+        - Prepping for `v0.13` release.
+        - Point `knative.dev/pkg` to branch `release-0.13`.
+
+        **Release Note**
+
+        ```release-note
+        NONE
+        ```
+
+        /cc @mattmoor

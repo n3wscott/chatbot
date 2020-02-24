@@ -10,7 +10,6 @@ spec:
   params:
     - name: GOPKG
     - name: DEPENDENCIES
-      default: "$(params.DEP_DEPENDENCY)"
     - name: ORGANIZATION
     - name: REPOSITORY
     # tomles
@@ -24,6 +23,10 @@ spec:
     # PR builder
     - name: PR_TITLE
     - name: PR_BODY
+    - name: NAME
+      default: "Scott Nichols"
+    - name: EMAIL
+      default: "snichols@vmware.com"
     - name: ASSIGNEE
       default: n3wscott
     - name: TARGET_BRANCH
@@ -83,6 +86,10 @@ spec:
           value: "$(params.ORGANIZATION)/$(params.REPOSITORY)"
         - name: TARGET
           value: "$(params.TARGET_BRANCH)"
+        - name: NAME
+          value: "$(params.NAME)"
+        - name: EMAIL
+          value: "$(params.EMAIL)"
         - name: COMMIT_BRANCH
           value: "$(params.COMMIT_BRANCH)"
         - name: TITLE

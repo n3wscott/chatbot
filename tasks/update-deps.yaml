@@ -38,7 +38,7 @@ spec:
       # Sometimes we "fix up" ./vendor, so run this for good measure.
       ./hack/update-deps.sh
       # We may pull in code-generator updates.
-      #./hack/update-codegen.sh
+      ./hack/update-codegen.sh
     env:
     - name: GOPATH
       value: /workspace/go

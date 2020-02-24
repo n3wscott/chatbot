@@ -11,6 +11,8 @@ spec:
       default: master
     - name: COMMIT_BRANCH
       default: random
+    - name: NAME
+    - name: EMAIL
     - name: TITLE
     - name: BODY
     - name: GITHUB_BINDING_SECRET_NAME
@@ -28,6 +30,10 @@ spec:
     - "--workspace=./"
     - "--repo=$(inputs.params.REPO)"
     - "--target=$(inputs.params.TARGET)"
+    - "--name"
+    - "$(inputs.params.TITLE)"
+    - "--email"
+    - "$(inputs.params.EMAIL)"
     - "--commit-branch=$(inputs.params.COMMIT_BRANCH)"
     - "--title=$(inputs.params.TITLE)"
     - "--body"
