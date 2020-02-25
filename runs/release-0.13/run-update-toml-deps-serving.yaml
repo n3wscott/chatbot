@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineRun
 metadata:
-  generateName: run-update-toml-deps-sample-source-
+  generateName: run-update-toml-deps-serving-
   namespace: bots
 spec:
   pipelineRef:
@@ -12,16 +12,16 @@ spec:
         type: git
         params:
           - name: url
-            value: https://github.com/knative/sample-source.git
+            value: https://github.com/knative/serving.git
   params:
     - name: GOPKG
-      value: knative.dev/sample-source
+      value: knative.dev/serving
     - name: ORGANIZATION
       value: knative
     - name: REPOSITORY
-      value: sample-source
+      value: serving
     - name: DEPENDENCIES
-      value: "knative.dev/pkg knative.dev/eventing"
+      value: knative.dev/pkg
     - name: DEP_DEPENDENCY
       value: knative.dev/pkg
     - name: DEP_BRANCH
